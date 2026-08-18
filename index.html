@@ -1,331 +1,196 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Favourite Chapter ❤️</title>
-
+    <title>Favourite Chapter</title>
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-    <!-- Background -->
-    <div class="background">
-        <div class="stars"></div>
-        <div class="glow glow-one"></div>
-        <div class="glow glow-two"></div>
+    <!-- Background Canvas for Stars/Glow -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Music Control Button -->
+    <button id="music-toggle" class="music-btn" aria-label="Toggle Music">
+        <span class="music-icon">♪</span> <span id="music-status">Music OFF</span>
+    </button>
+    <audio id="bg-music" loop src="assets/music.mp3"></audio>
+
+    <!-- 1. Opening Screen -->
+    <section id="sec-opening" class="section active">
+        <div class="content-box text-center">
+            <p class="fade-text delay-1">Some stories are never planned...</p>
+            <p class="fade-text delay-2 italic">They simply become our favourite.</p>
+            <button id="btn-enter" class="btn-minimal delay-3">Enter the story &rarr;</button>
+        </div>
+    </section>
+
+    <!-- 2. Welcome Page -->
+    <section id="sec-welcome" class="section hidden">
+        <div class="content-box text-center">
+            <h1 class="main-title">
+                <span>Favourite</span>
+                <span class="accent-text">Chapter</span>
+            </h1>
+            <p class="sub-title">A little story made for someone special.</p>
+            <button id="btn-begin" class="btn-glow">Begin The Journey &rarr;</button>
+        </div>
+    </section>
+
+    <!-- 3. Secret Password -->
+    <section id="sec-password" class="section hidden">
+        <div class="content-box text-center glass-card">
+            <span class="tag">A SECRET DOOR</span>
+            <h2>Some things are meant to be opened only by the right person.</h2>
+            <div class="input-group">
+                <input type="password" id="pass-input" placeholder="Enter password..." autocomplete="off">
+                <button id="btn-pass-submit" class="btn-minimal">Unlock</button>
+            </div>
+            <p id="pass-error" class="error-msg"></p>
+        </div>
+    </section>
+
+    <!-- 4. Main Story Container (Unlocked after password) -->
+    <div id="story-container" class="hidden">
+
+        <!-- Envelope Scene -->
+        <section id="sec-envelope" class="story-section">
+            <div class="content-box text-center">
+                <span class="tag">FOR YOUR EYES ONLY</span>
+                <p class="sub-title">There is something inside that I wanted you to read.</p>
+                
+                <div class="envelope-wrapper" id="envelope-btn">
+                    <div class="envelope">
+                        <div class="flap"></div>
+                        <div class="pocket"></div>
+                        <div class="letter-preview">
+                            <div class="line"></div>
+                            <div class="line"></div>
+                        </div>
+                    </div>
+                </div>
+                <p class="hint-text">(Tap the envelope to open)</p>
+            </div>
+        </section>
+
+        <!-- Letter Section -->
+        <section id="sec-letter" class="story-section">
+            <div class="letter-card glass-card">
+                <div class="letter-date" id="letter-date-display">21 August</div>
+                <div id="typewriter-text" class="typewriter-container"></div>
+            </div>
+        </section>
+
+        <!-- Memories Section -->
+        <section id="sec-memories" class="story-section">
+            <div class="content-box">
+                <span class="chapter-tag">CHAPTER TWO</span>
+                <h2 class="section-title">Little moments,<br><span class="accent-text">Big memories.</span></h2>
+                
+                <div class="memory-grid">
+                    <div class="memory-card glass-card">
+                        <span class="num">01</span>
+                        <h3>The Beginning</h3>
+                        <p>How it all quietly started without us even realizing where it would lead.</p>
+                    </div>
+                    <div class="memory-card glass-card">
+                        <span class="num">02</span>
+                        <h3>The Conversations</h3>
+                        <p>Late night talks, endless random topics, and silent understandings.</p>
+                    </div>
+                    <div class="memory-card glass-card">
+                        <span class="num">03</span>
+                        <h3>The Little Things</h3>
+                        <p>The smiles, the care, and the unsaid words that meant everything.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Photo Memories -->
+        <section id="sec-photos" class="story-section">
+            <div class="content-box">
+                <h2 class="section-title text-center">Captured Moments</h2>
+                <div class="photo-gallery" id="photo-gallery-container">
+                    <!-- Dynamic Photos Loaded via Script -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Little Things Section -->
+        <section id="sec-little-things" class="story-section">
+            <div class="content-box text-center">
+                <h2 class="section-title">Things I hope<br><span class="accent-text">you never forget.</span></h2>
+                <div class="quotes-list">
+                    <p class="reveal-quote">You deserve happiness.</p>
+                    <p class="reveal-quote">Your smile matters.</p>
+                    <p class="reveal-quote">Your dreams matter.</p>
+                    <p class="reveal-quote">And yes...</p>
+                    <p class="reveal-quote highlight">You are special.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Birthday Countdown -->
+        <section id="sec-countdown" class="story-section">
+            <div class="content-box text-center glass-card">
+                <span class="tag">COUNTDOWN</span>
+                <h3 id="countdown-title">Until Your Special Day</h3>
+                <div id="timer" class="timer-display">
+                    <div><span id="days">00</span><label>Days</label></div>
+                    <div><span id="hours">00</span><label>Hours</label></div>
+                    <div><span id="minutes">00</span><label>Mins</label></div>
+                    <div><span id="seconds">00</span><label>Secs</label></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Birthday Moment Section -->
+        <section id="sec-birthday" class="story-section">
+            <div class="content-box text-center">
+                <h1 class="bday-title">Happy Birthday, <br><span class="accent-text" id="bday-name">Suma</span> ❤️</h1>
+                <p class="bday-sub">“May this chapter of your life be your most beautiful one yet.”</p>
+            </div>
+        </section>
+
+        <!-- Final Message -->
+        <section id="sec-final-message" class="story-section">
+            <div class="content-box text-center">
+                <p class="slow-reveal">I don't know what the next chapters will look like...</p>
+                <p class="slow-reveal delay-long">But I'm grateful that you are part of this one.</p>
+                <h2 class="final-heading slow-reveal delay-vlong">You became<br><span class="accent-text">my Favourite Chapter.</span></h2>
+            </div>
+        </section>
+
+        <!-- Final Surprise Button -->
+        <section id="sec-surprise" class="story-section text-center">
+            <button id="btn-surprise" class="btn-glow">One Last Surprise &rarr;</button>
+            <div id="surprise-modal" class="modal hidden">
+                <div class="modal-content glass-card">
+                    <span id="modal-close" class="close-btn">&times;</span>
+                    <h3>A Secret Message</h3>
+                    <p id="surprise-text">Thank you for being you. No matter where life takes us, this page stays right here forever.</p>
+                    <div class="modal-footer">
+                        <p class="italic">The End?</p>
+                        <small>Maybe just the beginning of another chapter. ❤️</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </div>
 
-    <!-- Floating Hearts -->
-    <div class="floating-hearts"></div>
-
-
-    <!-- ============================= -->
-    <!-- PAGE 1 : WELCOME -->
-    <!-- ============================= -->
-
-    <section class="page active" id="welcomePage">
-
-        <div class="welcome-content">
-
-            <p class="small-title">A LITTLE SOMETHING FOR YOU</p>
-
-            <h1>
-                My Favourite<br>
-                <span>Chapter</span>
-            </h1>
-
-            <p class="welcome-text">
-                Some stories are written in books...
-                <br>
-                ours is written in memories. ❤️
-            </p>
-
-            <button class="main-btn" onclick="goToPassword()">
-                Begin The Journey
-                <span>→</span>
-            </button>
-
-        </div>
-
-        <div class="scroll-hint">
-            <span>Scroll slowly</span>
-            <div class="scroll-line"></div>
-        </div>
-
-    </section>
-
-
-
-    <!-- ============================= -->
-    <!-- PAGE 2 : PASSWORD -->
-    <!-- ============================= -->
-
-    <section class="page" id="passwordPage">
-
-        <div class="password-card">
-
-            <div class="lock-icon">🔐</div>
-
-            <p class="small-title">A SECRET DOOR</p>
-
-            <h2>
-                Only you can<br>
-                <span>open this.</span>
-            </h2>
-
-            <p>
-                There is a little secret waiting inside.
-                <br>
-                Enter the password to continue.
-            </p>
-
-            <div class="password-box">
-
-                <input
-                    type="password"
-                    id="passwordInput"
-                    placeholder="Enter password"
-                    autocomplete="off"
-                >
-
-                <button onclick="checkPassword()">→</button>
-
-            </div>
-
-            <div class="error-message" id="passwordError">
-                Hmm... that's not the right one. ❤️
-            </div>
-
-            <button class="back-btn" onclick="goToPage('welcomePage')">
-                ← Go back
-            </button>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- ============================= -->
-    <!-- PAGE 3 : ENVELOPE -->
-    <!-- ============================= -->
-
-    <section class="page" id="envelopePage">
-
-        <div class="envelope-section">
-
-            <p class="small-title">FOR YOUR EYES ONLY</p>
-
-            <h2>
-                There's a letter<br>
-                <span>for you.</span>
-            </h2>
-
-            <div class="envelope-wrapper" onclick="openEnvelope()">
-
-                <div class="envelope">
-
-                    <div class="envelope-back"></div>
-
-                    <div class="letter-inside">
-                        <span>For You ❤️</span>
-                    </div>
-
-                    <div class="envelope-front"></div>
-
-                    <div class="envelope-flap"></div>
-
-                </div>
-
-            </div>
-
-            <p class="click-text" id="envelopeHint">
-                Tap the envelope to open
-            </p>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- ============================= -->
-    <!-- PAGE 4 : LETTER -->
-    <!-- ============================= -->
-
-    <section class="page" id="letterPage">
-
-        <div class="letter-container">
-
-            <p class="small-title">CHAPTER ONE</p>
-
-            <h2>
-                Dear <span>you...</span>
-            </h2>
-
-            <div class="letter-card">
-
-                <div class="letter-date">
-                    21 August
-                </div>
-
-                <div id="letterText"></div>
-
-                <div class="signature">
-                    With love,<br>
-                    <span>Someone who cares ❤️</span>
-                </div>
-
-            </div>
-
-            <button
-                class="main-btn"
-                id="letterContinue"
-                onclick="goToPage('memoryPage')"
-                style="display:none;"
-            >
-                Continue The Story
-                <span>→</span>
-            </button>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- ============================= -->
-    <!-- PAGE 5 : MEMORIES -->
-    <!-- ============================= -->
-
-    <section class="page" id="memoryPage">
-
-        <div class="memory-container">
-
-            <p class="small-title">CHAPTER TWO</p>
-
-            <h2>
-                Little moments,<br>
-                <span>big memories.</span>
-            </h2>
-
-            <p class="memory-intro">
-                Maybe they were small moments...
-                but somehow, they became my favourites.
-            </p>
-
-
-            <div class="memory-grid">
-
-                <div class="memory-card">
-                    <div class="memory-number">01</div>
-                    <h3>The Beginning</h3>
-                    <p>
-                        A simple beginning that slowly became
-                        something much more beautiful.
-                    </p>
-                </div>
-
-                <div class="memory-card">
-                    <div class="memory-number">02</div>
-                    <h3>The Conversations</h3>
-                    <p>
-                        Endless conversations, random topics,
-                        and moments I never wanted to end.
-                    </p>
-                </div>
-
-                <div class="memory-card">
-                    <div class="memory-number">03</div>
-                    <h3>The Little Things</h3>
-                    <p>
-                        Sometimes the smallest things create
-                        the biggest memories.
-                    </p>
-                </div>
-
-            </div>
-
-
-            <button
-                class="main-btn"
-                onclick="goToPage('finalPage')"
-            >
-                One Last Thing
-                <span>→</span>
-            </button>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- ============================= -->
-    <!-- PAGE 6 : FINAL -->
-    <!-- ============================= -->
-
-    <section class="page" id="finalPage">
-
-        <div class="final-container">
-
-            <div class="heart-big">
-                ❤️
-            </div>
-
-            <p class="small-title">
-                THE FINAL CHAPTER
-            </p>
-
-            <h1>
-                Happy Birthday,<br>
-                <span>Beautiful Soul.</span>
-            </h1>
-
-            <p class="final-text">
-                I don't know what the future chapters will look like,
-                but I'm genuinely grateful that you are a part of this one.
-            </p>
-
-            <p class="final-text">
-                May your smile stay bright,
-                your dreams come true,
-                and your life be filled with beautiful moments.
-            </p>
-
-            <div class="final-line"></div>
-
-            <p class="forever">
-                Some people become memories.<br>
-                Some become chapters.<br>
-                <strong>You became my favourite chapter.</strong>
-            </p>
-
-            <button class="restart-btn" onclick="restartJourney()">
-                ↻ Read Again
-            </button>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- Music -->
-    <audio id="backgroundMusic" loop>
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
-
+    <!-- Image Lightbox Container -->
+    <div id="lightbox" class="lightbox hidden">
+        <span id="lightbox-close">&times;</span>
+        <img id="lightbox-img" src="" alt="Enlarged Memory">
+    </div>
 
     <script src="script.js"></script>
-
 </body>
 </html>
