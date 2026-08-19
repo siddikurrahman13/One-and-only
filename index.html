@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Favourite Chapter</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="ambient ambient-a"></div>
+<div class="ambient ambient-b"></div>
+<div class="grain"></div>
+
+<div class="top-nav-controls">
+  <button id="navBackBtn" class="nav-btn" onclick="goBackPage()" style="display:none">← Back</button>
+  <button id="navMusicBtn" class="nav-btn right-btn" onclick="toggleAudio()">♫ Music</button>
+</div>
+
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<section id="welcome">
+  <div class="welcome-shell">
+    <div class="eyebrow">A LITTLE WORLD MADE FOR YOU</div>
+    <div class="orb">✦</div>
+    <h3>Welcome to</h3>
+    <h1>Favourite<br><span>Chapter</span></h1>
+    <p>Some stories are not written in books.<br>They are written in moments, memories and people.</p>
+    <button onclick="nextPage()" class="primary-btn">Begin the journey <span>↗</span></button>
+  </div>
+</section>
+
+<section id="passwordPage" class="page hidden">
+  <div class="login-card">
+    <div class="card-symbol">⌁</div>
+    <div class="mini-label">PRIVATE CHAPTER</div>
+    <h2>A little secret</h2>
+    <p>There is a small door before the story begins.<br>Only the right words can open it.</p>
+    <input id="password" type="text" placeholder="Enter the password" autocomplete="off">
+    <button onclick="checkPassword()" class="primary-btn">Unlock <span>→</span></button>
+    <small>Hint: the title of this little world.</small>
+  </div>
+</section>
+
+<section id="envelopePage" class="page hidden">
+  <div class="envelope-scene">
+    <div class="mini-label">CHAPTER ONE</div>
+    <h2>Something is waiting for you.</h2>
+    <div class="new-envelope" onclick="openEnvelope()">
+      <div class="env-back"></div>
+      <div class="env-paper">✉</div>
+      <div class="env-flap"></div>
+      <div class="env-heart">♡</div>
+    </div>
+    <p class="tapText">tap the letter to open it</p>
+  </div>
+</section>
+
+<section id="letterPage" class="page hidden">
+  <article class="letter-modern">
+    <div class="chapter-tag">01 / A SMALL BEGINNING</div>
+    <h2>Hey tui... <span>♡</span></h2>
+    <div class="line-rule"></div>
+    <div id="typewriter"></div>
+  </article>
+  <button id="nextChapterBtn" onclick="goToChapter2()">Continue to Chapter 2 →</button>
+</section>
+
+<section id="chapter2" class="page hidden">
+  <article class="story-panel">
+    <div class="chapter-tag">02 / HOW WE FOUND OUR WAY BACK</div>
+    <h2>Our story</h2>
+    <div class="story-index">MEMORY <span id="memoryNo">01</span></div>
+    <div id="chapter2Story"></div>
+    <button id="chapter2NextBtn">Continue ✦</button>
+  </article>
+</section>
+
+<section id="chapter3" class="page hidden">
+  <article class="story-panel chapter-three">
+    <div class="chapter-tag">03 / SOMEWHERE BETWEEN THE NIGHTS</div>
+    <h2>Favourite person</h2>
+    <div id="chapter3Story"></div>
+    <button id="chapter3NextBtn">Continue ✦</button>
+  </article>
+</section>
+
+<section id="finalChapter" class="page hidden">
+  <article class="final-door">
+    <div class="door-number">04</div>
+    <div class="chapter-tag">THE LAST DOOR</div>
+    <h1>One more thing...</h1>
+    <p>Before this little journey ends, there is something I wanted you to read.</p>
+    <button id="openFinalBtn" onclick="openFinalSurprise()" class="primary-btn">Open the final surprise <span>↗</span></button>
+  </article>
+</section>
+
+<section id="birthdayReveal" class="page hidden">
+  <div class="birthday-content-new">
+    <div class="date-stamp">21 / AUGUST</div>
+    <div class="tinyStars">✦　✧　✦</div>
+    <div class="birthdaySmall">TODAY BELONGS TO</div>
+    <h1>Someone<br><span>special.</span></h1>
+    <div id="birthdayMessage"></div>
+    <button id="oneMoreBtn">Continue ✨</button>
+  </div>
+</section>
+
+<section id="celebrationScene" class="page hidden">
+  <div id="celebrationConfetti"></div>
+  <article class="celebration-new">
+    <div class="cake-mark">✦</div>
+    <div class="chapter-tag">A WISH FOR YOU</div>
+    <h2>Close your eyes.<br><span>Make a wish.</span></h2>
+    <div class="wish-card">
+      <div id="celebrationMessage"></div>
+    </div>
+    <button id="makeWishBtn" onclick="startCelebration()" class="primary-btn">Make a wish ✨</button>
+    <button id="celebrationContinueBtn" onclick="goToFinalMessage()" class="ghost-btn">One last page →</button>
+  </article>
+</section>
+
+<section id="ultimateEnding" class="page hidden">
+  <article class="ending-new">
+    <div class="ending-symbol">♡</div>
+    <div class="chapter-tag">THE END — FOR NOW</div>
+    <div id="ultimateText"></div>
+  </article>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>
