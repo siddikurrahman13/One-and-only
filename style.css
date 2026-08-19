@@ -376,3 +376,157 @@ button,input{font:inherit}
   .finalTypingLine{font-size:20px;line-height:1.75;margin-bottom:40px}
   .top-nav-controls{padding:0 10px}
 }
+/* =========================================
+   BIRTHDAY IMAGE + MOBILE LAYOUT FIX
+========================================= */
+
+#birthdayReveal {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 25px 15px 90px;
+    box-sizing: border-box;
+}
+
+.birthday-content-new {
+    width: 100%;
+    max-width: 620px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    box-sizing: border-box;
+}
+
+/* IMAGE CONTAINER */
+
+.birthdayImageBox {
+    width: 100%;
+    max-width: 520px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 18px auto;
+
+    overflow: hidden;
+}
+
+/* MAIN IMAGE */
+
+.birthday-surprise-image {
+    display: block;
+
+    width: auto;
+    max-width: 92%;
+
+    /* ছবিকে আর অস্বাভাবিক লম্বা হতে দেবে না */
+    max-height: 420px;
+
+    height: auto;
+
+    object-fit: contain;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 0 25px rgba(255,105,180,.30),
+        0 0 60px rgba(255,105,180,.12);
+
+    opacity: 1;
+    transform: none;
+}
+
+/* Continue button সবসময় screen-এর মধ্যে থাকবে */
+
+#oneMoreBtn {
+    position: fixed;
+
+    left: 50%;
+    bottom: 15px;
+
+    transform: translateX(-50%);
+
+    z-index: 99999;
+
+    margin: 0;
+
+    min-width: 200px;
+
+    padding: 12px 25px;
+
+    box-sizing: border-box;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    #birthdayReveal {
+        min-height: 100vh;
+
+        padding:
+            25px 12px 85px;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        align-items: flex-start;
+    }
+
+    .birthday-content-new {
+        width: 100%;
+        max-width: 100%;
+
+        padding:
+            10px 0 70px;
+    }
+
+    .birthdayImageBox {
+        width: 100%;
+        max-width: 100%;
+
+        margin: 15px auto;
+    }
+
+    .birthday-surprise-image {
+        width: auto;
+
+        max-width: 94%;
+
+        /* মোবাইলে ছবির height সীমিত */
+        max-height: 300px;
+
+        height: auto;
+
+        border-radius: 16px;
+    }
+
+    #oneMoreBtn {
+        bottom: 12px;
+
+        min-width: 190px;
+
+        max-width: calc(100vw - 30px);
+
+        padding: 11px 22px;
+
+        font-size: 15px;
+    }
+}
