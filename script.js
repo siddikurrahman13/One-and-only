@@ -5,6 +5,7 @@ function toggleAudio() {
   const music = document.getElementById("bgMusic");
   const btn = document.getElementById("navMusicBtn");
   if (!music) return;
+
   if (music.paused) {
     music.play().then(function() {
       btn.innerHTML = "⏸ Pause";
@@ -18,17 +19,18 @@ function toggleAudio() {
 }
 
 /* =========================
-   2. ACCURATE PAGE HISTORY & BACK LOGIC
+   2. STEP-BY-STEP BACK LOGIC
 ========================= */
-var pageHistoryArray = ["welcome"];
+var pageHistoryArray = [{ pageId: "welcome", lineIndex: 0 }];
 
-function showPage(pageId) {
+function showPage(pageId, lineIndex = 0) {
   if (chapter1Typing) clearInterval(chapter1Typing);
   if (chapter2Typing) clearInterval(chapter2Typing);
   if (chapter3Typing) clearInterval(chapter3Typing);
   if (birthdayTyping) clearInterval(birthdayTyping);
 
   hideAllPages();
+
   const targetPage = document.getElementById(pageId);
   if (targetPage) {
     targetPage.classList.remove("hidden");
@@ -39,8 +41,9 @@ function showPage(pageId) {
     }
   }
 
-  if (pageHistoryArray[pageHistoryArray.length - 1] !== pageId) {
-    pageHistoryArray.push(pageId);
+  const lastState = pageHistoryArray[pageHistoryArray.length - 1];
+  if (!lastState || lastState.pageId !== pageId || lastState.lineIndex !== lineIndex) {
+    pageHistoryArray.push({ pageId: pageId, lineIndex: lineIndex });
   }
 
   var backBtn = document.getElementById("navBackBtn");
@@ -51,8 +54,8 @@ function showPage(pageId) {
 
 function goBackPage() {
   if (pageHistoryArray.length > 1) {
-    pageHistoryArray.pop();
-    var previousPageId = pageHistoryArray[pageHistoryArray.length - 1];
+    pageHistoryArray.pop(); 
+    var prevState = pageHistoryArray[pageHistoryArray.length - 1]; 
 
     if (chapter1Typing) clearInterval(chapter1Typing);
     if (chapter2Typing) clearInterval(chapter2Typing);
@@ -60,14 +63,29 @@ function goBackPage() {
     if (birthdayTyping) clearInterval(birthdayTyping);
 
     hideAllPages();
-    const targetPage = document.getElementById(previousPageId);
+
+    const targetPage = document.getElementById(prevState.pageId);
     if (targetPage) {
       targetPage.classList.remove("hidden");
-      if (previousPageId === "finalChapter" || previousPageId === "birthdayReveal" || previousPageId === "celebrationScene" || previousPageId === "ultimateEnding") {
+      if (prevState.pageId === "finalChapter" || prevState.pageId === "birthdayReveal" || prevState.pageId === "celebrationScene" || prevState.pageId === "ultimateEnding") {
         targetPage.style.display = "flex";
       } else {
         targetPage.style.display = "";
       }
+    }
+
+    if (prevState.pageId === "chapter2") {
+      chapter2Line = prevState.lineIndex;
+      renderChapter2Static();
+    } else if (prevState.pageId === "chapter3") {
+      chapter3Line = prevState.lineIndex;
+      renderChapter3Static();
+    } else if (prevState.pageId === "birthdayReveal") {
+      birthdayLine = prevState.lineIndex;
+      renderBirthdayStatic();
+    } else if (prevState.pageId === "letterPage") {
+      line = prevState.lineIndex;
+      renderLetterStatic();
     }
 
     var backBtn = document.getElementById("navBackBtn");
@@ -79,8 +97,16 @@ function goBackPage() {
 
 function hideAllPages() {
   const pages = [
-    "welcome","passwordPage","envelopePage","letterPage","chapter2",
-    "chapter3","finalChapter","birthdayReveal","celebrationScene","ultimateEnding"
+    "welcome",
+    "passwordPage",
+    "envelopePage",
+    "letterPage",
+    "chapter2",
+    "chapter3",
+    "finalChapter",
+    "birthdayReveal",
+    "celebrationScene",
+    "ultimateEnding"
   ];
   pages.forEach(function (id) {
     const page = document.getElementById(id);
@@ -91,23 +117,26 @@ function hideAllPages() {
   });
 }
 
-function nextPage() { showPage("passwordPage"); }
+function nextPage() {
+  showPage("passwordPage", 0);
+}
 
 function checkPassword() {
   const pass = document.getElementById("password").value.toLowerCase().trim();
   if (pass === "favourite chapter") {
-    showPage("envelopePage");
+    showPage("envelopePage", 0);
   } else {
     alert("Wrong Password 💔");
   }
 }
 
 function openEnvelope() {
-  showPage("letterPage");
+  showPage("letterPage", 0);
   document.getElementById("nextChapterBtn").style.display = "none";
   startLetter();
 }
 
+/* CHAPTER 1 LOGIC */
 const lines = [
   "Hey tui... ❤️",
   "Haa... tokei bolchi. 😊",
@@ -135,6 +164,7 @@ function showNextLine() {
     return;
   }
 
+  showPage("letterPage", line);
   const text = lines[line];
   let i = 0;
   const box = document.getElementById("typewriter");
@@ -151,11 +181,26 @@ function showNextLine() {
   }, 50);
 }
 
+function renderLetterStatic() {
+  const box = document.getElementById("typewriter");
+  const btn = document.getElementById("nextChapterBtn");
+  box.innerHTML = "";
+  for (let idx = 0; idx < line; idx++) {
+    box.innerHTML += lines[idx] + "<br><br>";
+  }
+  if (line >= lines.length) {
+    btn.style.display = "block";
+  } else {
+    btn.style.display = "none";
+  }
+}
+
 function goToChapter2() {
-  showPage("chapter2");
+  showPage("chapter2", 0);
   startChapter2();
 }
 
+/* CHAPTER 2 LOGIC */
 const chapter2Lines = [
   "Our story didn't really start with a beautiful moment... 🤍",
   "বরং শুরুটা হয়েছিল একটা classroom-এ... আর একটা ছোট্ট ঝগড়া দিয়ে। 😬",
@@ -177,7 +222,7 @@ const chapter2Lines = [
   "সময় চলে গেল। Days became months... আর আমি ভেবেছিলাম, হয়তো গল্পটা এখানেই শেষ।",
   "But some stories don't end when we think they do...",
   "Because then came 2 June 2025. ✨",
-  "একদিন হঠাৎ... an unknown number থেকে একটা message এলো।",
+  "সেইদিন হঠাৎ... an unknown number থেকে একটা message এলো।",
   "আর message-এর ওপাশে ছিলি... তুই। ❤️",
   "কী অদ্ভুত না? এতদিন পরেও somehow, we found our way back to each other.",
   "তারপর থেকে আবার কথা... আবার সেই পরিচিত feeling... আর এবার গল্পটা আর হারিয়ে যায়নি।",
@@ -210,15 +255,17 @@ function showChapter2Line() {
     return;
   }
 
+  showPage("chapter2", chapter2Line);
   const text = chapter2Lines[chapter2Line];
-  let specialClass = "";
 
+  let specialClass = "";
   if (text.includes("28 November 2023")) specialClass = "dateMoment";
   if (text.includes("27 April 2024")) specialClass = "sadMoment";
   if (text.includes("2 June 2025")) specialClass = "returnMoment";
 
   box.innerHTML = `<div class="chapterStoryText ${specialClass}"></div>`;
   const textBox = box.querySelector(".chapterStoryText");
+
   let i = 0;
   btn.style.display = "none";
 
@@ -235,11 +282,36 @@ function showChapter2Line() {
   }, 45);
 }
 
+function renderChapter2Static() {
+  const box = document.getElementById("chapter2Story");
+  const btn = document.getElementById("chapter2NextBtn");
+
+  if (chapter2Line >= chapter2Lines.length) {
+    btn.innerHTML = "📖 Continue to Chapter 3";
+    btn.style.display = "inline-block";
+    btn.onclick = goToChapter3;
+    box.innerHTML = "";
+    return;
+  }
+
+  const text = chapter2Lines[chapter2Line];
+  let specialClass = "";
+  if (text.includes("28 November 2023")) specialClass = "dateMoment";
+  if (text.includes("27 April 2024")) specialClass = "sadMoment";
+  if (text.includes("2 June 2025")) specialClass = "returnMoment";
+
+  box.innerHTML = `<div class="chapterStoryText ${specialClass}">${text}</div>`;
+  btn.innerHTML = "Continue ✨";
+  btn.style.display = "inline-block";
+  btn.onclick = showChapter2Line;
+}
+
 function goToChapter3() {
-  showPage("chapter3");
+  showPage("chapter3", 0);
   startChapter3();
 }
 
+/* CHAPTER 3 LOGIC */
 const chapter3Lines = [
   "At first, everything was pretty simple... 😊",
   "আমি একটু বেশি fun করতাম, আর তুইও সেগুলো equally enjoy করতি।",
@@ -277,6 +349,7 @@ function showNextChapter3Line() {
     return;
   }
 
+  showPage("chapter3", chapter3Line);
   const text = chapter3Lines[chapter3Line];
   let i = 0;
   box.innerHTML = "";
@@ -295,8 +368,30 @@ function showNextChapter3Line() {
   }, 45);
 }
 
-function goToFinalChapter() { showPage("finalChapter"); }
+function renderChapter3Static() {
+  const box = document.getElementById("chapter3Story");
+  const btn = document.getElementById("chapter3NextBtn");
 
+  if (chapter3Line >= chapter3Lines.length) {
+    btn.innerHTML = "💌 Continue to Final Chapter";
+    btn.style.display = "inline-block";
+    btn.onclick = goToFinalChapter;
+    box.innerHTML = "";
+    return;
+  }
+
+  const text = chapter3Lines[chapter3Line];
+  box.innerHTML = text;
+  btn.innerHTML = "Continue ✨";
+  btn.style.display = "inline-block";
+  btn.onclick = showNextChapter3Line;
+}
+
+function goToFinalChapter() {
+  showPage("finalChapter", 0);
+}
+
+/* BIRTHDAY WISH LOGIC */
 const birthdayLines = [
   "আজকের দিনটা শুধু একটা date না... 🤍",
   "আজ এমন একজন মানুষের birthday, যে somehow আমার গল্পের একটা very special part হয়ে গেছে। ❤️",
@@ -309,7 +404,7 @@ let birthdayLine = 0;
 let birthdayTyping = null;
 
 function openFinalSurprise() {
-  showPage("birthdayReveal");
+  showPage("birthdayReveal", 0);
   birthdayLine = 0;
   const box = document.getElementById("birthdayMessage");
   box.innerHTML = "";
@@ -330,6 +425,7 @@ function showBirthdayLine() {
     return;
   }
 
+  showPage("birthdayReveal", birthdayLine);
   box.innerHTML = "";
   const text = birthdayLines[birthdayLine];
   let i = 0;
@@ -349,8 +445,27 @@ function showBirthdayLine() {
   }, 45);
 }
 
+function renderBirthdayStatic() {
+  const box = document.getElementById("birthdayMessage");
+  const btn = document.getElementById("oneMoreBtn");
+
+  if (birthdayLine >= birthdayLines.length) {
+    btn.innerHTML = "🎂 Let's Celebrate";
+    btn.style.display = "inline-block";
+    btn.onclick = goToCelebration;
+    box.innerHTML = "";
+    return;
+  }
+
+  const text = birthdayLines[birthdayLine];
+  box.innerHTML = text;
+  btn.innerHTML = "Continue ✨";
+  btn.style.display = "inline-block";
+  btn.onclick = showBirthdayLine;
+}
+
 function goToCelebration() {
-  showPage("celebrationScene");
+  showPage("celebrationScene", 0);
   const message = document.getElementById("celebrationMessage");
   message.innerHTML = "";
   document.getElementById("celebrationContinueBtn").style.display = "none";
@@ -364,21 +479,10 @@ function startCelebration() {
   const continueBtn = document.getElementById("celebrationContinueBtn");
 
   wishButton.style.display = "none";
-
-  message.innerHTML = `
-    <p class="wishMoment">
-      Close your eyes... 🤍
-      <br><br>
-      Make a wish. ✨
-    </p>
-  `;
+  message.innerHTML = `<p class="wishMoment">Close your eyes... 🤍<br><br>Make a wish. ✨</p>`;
 
   setTimeout(function () {
-    message.innerHTML = `
-      <p class="wishMoment">
-        And now... make it come true. ❤️
-      </p>
-    `;
+    message.innerHTML = `<p class="wishMoment">And now... make it come true. ❤️</p>`;
     createConfetti();
   }, 2200);
 
@@ -389,7 +493,7 @@ function startCelebration() {
 
 function createConfetti() {
   const container = document.getElementById("celebrationConfetti");
-  const pieces = ["🎉","🎊","✨","💖","💫","🌸"];
+  const pieces = ["🎉", "🎊", "✨", "💖", "💫", "🌸"];
   container.innerHTML = "";
 
   for (let i = 0; i < 35; i++) {
@@ -403,8 +507,7 @@ function createConfetti() {
 }
 
 function goToFinalMessage() {
-  showPage("ultimateEnding");
-
+  showPage("ultimateEnding", 0);
   const box = document.getElementById("ultimateText");
   box.innerHTML = "";
 
@@ -431,11 +534,7 @@ function goToFinalMessage() {
     const paragraph = document.createElement("p");
     paragraph.className = "finalTypingLine";
     box.appendChild(paragraph);
-
-    paragraph.scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
+    paragraph.scrollIntoView({ behavior: "smooth", block: "center" });
 
     const text = finalLines[currentLine];
     let i = 0;
@@ -443,7 +542,6 @@ function goToFinalMessage() {
     const typing = setInterval(function () {
       paragraph.textContent += text.charAt(i);
       i++;
-
       if (i >= text.length) {
         clearInterval(typing);
         currentLine++;
@@ -456,6 +554,6 @@ function goToFinalMessage() {
 }
 
 window.addEventListener("load", function () {
-  pageHistoryArray = ["welcome"];
-  showPage("welcome");
+  pageHistoryArray = [{ pageId: "welcome", lineIndex: 0 }];
+  showPage("welcome", 0);
 });
